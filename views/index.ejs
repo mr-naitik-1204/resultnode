@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data</title>
+</head>
+
+<body>
+    <form action="/createdata" method="get">
+        Name: <input type="text" name="name" value="<%= editdata ? editdata.name : '' %>"><br><br>
+        Gujrati: <input type="number" name="gujrati" value="<%= editdata ? editdata.gujrati : '' %>"><br><br>
+        Hindi: <input type="number" name="hindi" value="<%= editdata ? editdata.hindi : '' %>"><br><br>
+        English: <input type="number" name="english" value="<%= editdata ? editdata.english : '' %>"><br><br>
+        Science: <input type="number" name="science" value="<%= editdata ? editdata.science : '' %>"><br><br>
+        Sanskrut: <input type="number" name="sanskrut" value="<%= editdata ? editdata.sanskrut : '' %>"><br><br>
+        <input type="submit" value="<%= editdata ? 'Update' : 'Submit' %>">
+    </form>
+
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Gujrati</th>
+            <th>Hindi</th>
+            <th>English</th>
+            <th>Science</th>
+            <th>Sanskrut</th>
+            <th>Total</th>
+            <th>Percentage</th>
+            <th>Grade</th>
+            <th>Result</th>
+            <th>Delete</th>
+            <th>Update</th>
+        </tr>
+        <% data.map((item, index) => { %>
+            <% 
+                // Define functions for calculations
+                function total(mark) {
+                  
+                    const gujrati=Number(mark.gujrati)
+                    const hindi=Number(mark.hindi)
+                    const english=Number(mark.english)
+                    const science=Number(mark.science)
+                    const sanskrut=Number(mark.sanskrut)
+                  
+                  
+                    return gujrati + hindi + english + science + sanskrut;
+                }
+
+                function pr(mark) {                
+                    return total(mark) / 5;
+                }
+
+                function gred(per) {
+                    let grade;
+                    if (per >= 95) {
+                        grade = "A+";
+                    } else if (per >= 85) {
+                        grade = "A";
+                    } else if (per >= 75) {
+                        grade = "B+";
+                    } else if (per >= 65) {
+                        grade = "B";
+                    } else if (per >= 55) {
+                        grade = "C+";
+                    } else if (per >= 45) {
+                        grade = "C";
+                    } else {
+                        grade = "Fail";
+                    }
+                    return grade;
+                }
+
+                function result(mark) {
+                    const countBelow33 = [mark.gujrati, mark.hindi, mark.english, mark.science, mark.sanskrut]
+                        .filter(m => m < 33).length;
+                    let res;
+                    if (countBelow33 === 0) {
+                        res = "Pass";
+                    } else if (countBelow33 <= 2) {
+                        res = "ATKT";
+                    } else {
+                        res = "Fail";
+                    }
+                    return res;
+                }
+
+                // Perform calculations
+                const totalMarks = total(item);
+                const percentage = pr(item);
+                const grade = gred(percentage);
+                const studentResult = result(item);
+            %>
+            <tr align="center">
+                <td><%= item.name %></td>
+                <td><%= item.gujrati %></td>
+                <td><%= item.hindi %></td>
+                <td><%= item.english %></td>
+                <td><%= item.science %></td>
+                <td><%= item.sanskrut %></td>
+                <td><%= totalMarks %></td>
+                <td><%= percentage %></td>
+                <td><%= grade %></td>
+                <td><%= studentResult %></td>
+                <td><a href="/deletedata?delet=<%= index %>">Delete</a></td>
+                <td><a href="/updetedata?updete=<%= index %>">Update</a></td>
+            </tr>
+        <% }) %>
+    </table>
+</body>
+
+</html>
